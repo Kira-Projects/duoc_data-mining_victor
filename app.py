@@ -26,6 +26,10 @@ def index():
 def static_files(filename):
     return send_from_directory('static', filename)
 
+@app.route('/image/<path:filename>')
+def image_files(filename):
+    return send_from_directory('image', filename)
+
 @app.route('/upload', methods=['POST'])
 def upload():
     print("Recibida petición /upload")
@@ -72,12 +76,11 @@ def upload():
         print("df_filtrado.csv guardado.")
         print("Generando gráfica de distribución de confort...")
         plt.figure(figsize=(6,4))
-        custom_palette = ['#7D8C99', '#B6CBDE']  # No Confort, Confort
-        sns.countplot(data=df_filtrado, x='EsConfortable', palette=custom_palette)
-        plt.title("Distribución de Confort Climático", color='#454D54', fontweight='bold')
-        plt.xticks([0, 1], ["No Confort", "Confort"], color='#454D54')
-        plt.ylabel("Cantidad de Registros", color='#454D54')
-        plt.xlabel("Confort Climático", color='#454D54')
+        sns.countplot(data=df_filtrado, x='EsConfortable')
+        plt.title("Distribución de Confort Climático")
+        plt.xticks([0, 1], ["No Confort", "Confort"])
+        plt.ylabel("Cantidad de Registros")
+        plt.xlabel("Confort Climático")
         plt.tight_layout()
         os.makedirs('static', exist_ok=True)
         plt.savefig('static/distribucion_confort.png', dpi=150, facecolor='white')
@@ -136,9 +139,8 @@ def upload():
         # Crear directorio static si no existe
         os.makedirs('static', exist_ok=True)
         
-        # Generar y guardar la visualización del árbol con colores personalizados
+        # Generar y guardar la visualización del árbol con colores por defecto
         plt.figure(figsize=(14, 18))
-        node_colors = ['#7D8C99', '#B6CBDE']  # No Confort, Confort
         plot_tree(
             best_model,
             feature_names=variables,
@@ -149,9 +151,8 @@ def upload():
             impurity=False,
             proportion=True,
             precision=2,
-            # No hay argumento directo para colores, pero los nodos se colorean según clase
         )
-        plt.title("Árbol de Decisión - Confort Climático (Modelo Óptimo)", color='#454D54', fontweight='bold')
+        plt.title("Árbol de Decisión - Confort Climático (Modelo Óptimo)")
         plt.tight_layout()
         plt.savefig('static/arbol_decision.png', dpi=300, bbox_inches='tight', facecolor='white')
         plt.close()
@@ -284,9 +285,8 @@ def correlacion():
         # Calcular matriz de correlación
         corr = df[variables].corr()
         plt.figure(figsize=(len(variables)*1.2, len(variables)*1))
-        heatmap_colors = ['#B6CBDE', '#99AABA', '#BCD2E6', '#7D8C99', '#626D78', '#454D54']
-        sns.heatmap(corr, annot=True, cmap=sns.color_palette(heatmap_colors, as_cmap=True), fmt='.2f', square=True, cbar_kws={'label': 'Correlación'})
-        plt.title('Matriz de Correlación', color='#454D54', fontweight='bold')
+        sns.heatmap(corr, annot=True, cmap='coolwarm', fmt='.2f', square=True, cbar_kws={'label': 'Correlación'})
+        plt.title('Matriz de Correlación')
         plt.tight_layout()
         os.makedirs('static', exist_ok=True)
         plt.savefig('static/correlacion.png', dpi=150, facecolor='white')

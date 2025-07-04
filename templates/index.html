@@ -14,18 +14,19 @@
     />
     <style>
       body {
-        background: #bcd2e6;
+        background: url("/image/images.jfif") no-repeat center center fixed;
+        background-size: cover;
         font-family: "Montserrat", "Segoe UI", Arial, sans-serif;
-        color: #454d54;
+        color: #212529;
       }
       .container {
         max-width: 1100px;
         margin: 40px auto;
-        background: #fff;
+        background: rgba(255, 255, 255, 0.95);
         border-radius: 12px;
-        box-shadow: 0 4px 24px rgba(98, 109, 120, 0.1);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
         padding: 32px;
-        border: 2px solid #b6cbde;
+        border: none;
       }
       .visual {
         margin-bottom: 32px;
@@ -34,8 +35,8 @@
         max-width: 100%;
         height: auto;
         border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(98, 109, 120, 0.07);
-        border: 1.5px solid #99aaba;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        border: none;
       }
       .table-responsive {
         margin-top: 20px;
@@ -44,35 +45,35 @@
         margin-top: 32px;
         margin-bottom: 16px;
         font-weight: 600;
-        color: #454d54;
+        color: #212529;
         letter-spacing: 0.5px;
       }
       .result-block {
-        background: #b6cbde;
+        background: #f8f9fa;
         border-radius: 8px;
         padding: 18px 20px;
         margin-bottom: 18px;
-        border: 1.5px solid #99aaba;
-        color: #454d54;
+        border: none;
+        color: #212529;
       }
       .btn-primary,
       .btn-secondary {
-        background: #7d8c99;
+        background: #0d6efd;
         border: none;
         font-weight: 600;
         color: #fff;
       }
       .btn-primary:hover,
       .btn-secondary:hover {
-        background: #626d78;
+        background: #0b5ed7;
         color: #fff;
       }
       .btn-outline-danger {
-        border-color: #454d54;
-        color: #454d54;
+        border-color: #dc3545;
+        color: #dc3545;
       }
       .btn-outline-danger:hover {
-        background: #454d54;
+        background: #dc3545;
         color: #fff;
       }
       .loading {
@@ -83,7 +84,7 @@
       .loading .spinner-border {
         width: 3rem;
         height: 3rem;
-        color: #7d8c99;
+        color: #0d6efd;
       }
       .error {
         color: #c0392b;
@@ -96,7 +97,7 @@
         margin: 15px 0;
       }
       .desc-graf {
-        color: #626d78;
+        color: #212529;
         font-size: 0.98em;
         margin-top: 8px;
         margin-bottom: 18px;
@@ -105,17 +106,17 @@
       th,
       td,
       .form-label {
-        color: #454d54;
+        color: #212529;
         font-family: "Montserrat", "Segoe UI", Arial, sans-serif;
       }
       input[type="file"],
       .form-control {
-        background: #bcd2e6;
-        border: 1.5px solid #99aaba;
-        color: #454d54;
+        background: #fff;
+        border: 1px solid #ced4da;
+        color: #212529;
       }
       input[type="file"]::file-selector-button {
-        background: #7d8c99;
+        background: #0d6efd;
         color: #fff;
         border: none;
         border-radius: 4px;
@@ -123,19 +124,21 @@
         font-family: "Montserrat", "Segoe UI", Arial, sans-serif;
       }
       input[type="file"]::file-selector-button:hover {
-        background: #626d78;
+        background: #0b5ed7;
       }
       input[type="checkbox"]:checked {
-        accent-color: #7d8c99;
+        accent-color: #0d6efd;
       }
       .table-striped > tbody > tr:nth-of-type(odd) {
-        background-color: #b6cbde;
+        background-color: #f8f9fa;
+        color: #212529;
       }
       .table-striped > tbody > tr:nth-of-type(even) {
-        background-color: #bcd2e6;
+        background-color: #fff;
+        color: #212529;
       }
       .table > :not(caption) > * > * {
-        border-bottom: 1.5px solid #99aaba;
+        border-bottom: 1px solid #dee2e6;
       }
     </style>
   </head>

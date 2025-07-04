@@ -3,8 +3,8 @@ BIY7121 - Evaluación 3
 Predicción de Confort Climático en Australia
 =========================================
 
-INTEGRANTE: [Tu Nombre y Apellido]
-GRUPO: [Nombre del grupo o TeamName]
+INTEGRANTE: Víctor Hernández
+GRUPO: Clustering
 
 -----------------------------------------
 REQUISITOS PARA PROBAR EL SISTEMA
