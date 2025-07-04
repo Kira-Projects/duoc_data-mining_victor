@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Predicción de Confort Climático</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:400,600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background: #bcd2e6;
+        font-family: "Montserrat", "Segoe UI", Arial, sans-serif;
+        color: #454d54;
+      }
+      .container {
+        max-width: 1100px;
+        margin: 40px auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 24px rgba(98, 109, 120, 0.1);
+        padding: 32px;
+        border: 2px solid #b6cbde;
+      }
+      .visual {
+        margin-bottom: 32px;
+      }
+      .img-fluid {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(98, 109, 120, 0.07);
+        border: 1.5px solid #99aaba;
+      }
+      .table-responsive {
+        margin-top: 20px;
+      }
+      .section-title {
+        margin-top: 32px;
+        margin-bottom: 16px;
+        font-weight: 600;
+        color: #454d54;
+        letter-spacing: 0.5px;
+      }
+      .result-block {
+        background: #b6cbde;
+        border-radius: 8px;
+        padding: 18px 20px;
+        margin-bottom: 18px;
+        border: 1.5px solid #99aaba;
+        color: #454d54;
+      }
+      .btn-primary,
+      .btn-secondary {
+        background: #7d8c99;
+        border: none;
+        font-weight: 600;
+        color: #fff;
+      }
+      .btn-primary:hover,
+      .btn-secondary:hover {
+        background: #626d78;
+        color: #fff;
+      }
+      .btn-outline-danger {
+        border-color: #454d54;
+        color: #454d54;
+      }
+      .btn-outline-danger:hover {
+        background: #454d54;
+        color: #fff;
+      }
+      .loading {
+        display: none;
+        text-align: center;
+        margin: 20px 0;
+      }
+      .loading .spinner-border {
+        width: 3rem;
+        height: 3rem;
+        color: #7d8c99;
+      }
+      .error {
+        color: #c0392b;
+        font-weight: bold;
+        margin: 15px 0;
+      }
+      .success {
+        color: #27ae60;
+        font-weight: bold;
+        margin: 15px 0;
+      }
+      .desc-graf {
+        color: #626d78;
+        font-size: 0.98em;
+        margin-top: 8px;
+        margin-bottom: 18px;
+      }
+      label,
+      th,
+      td,
+      .form-label {
+        color: #454d54;
+        font-family: "Montserrat", "Segoe UI", Arial, sans-serif;
+      }
+      input[type="file"],
+      .form-control {
+        background: #bcd2e6;
+        border: 1.5px solid #99aaba;
+        color: #454d54;
+      }
+      input[type="file"]::file-selector-button {
+        background: #7d8c99;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 4px 12px;
+        font-family: "Montserrat", "Segoe UI", Arial, sans-serif;
+      }
+      input[type="file"]::file-selector-button:hover {
+        background: #626d78;
+      }
+      input[type="checkbox"]:checked {
+        accent-color: #7d8c99;
+      }
+      .table-striped > tbody > tr:nth-of-type(odd) {
+        background-color: #b6cbde;
+      }
+      .table-striped > tbody > tr:nth-of-type(even) {
+        background-color: #bcd2e6;
+      }
+      .table > :not(caption) > * > * {
+        border-bottom: 1.5px solid #99aaba;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="mb-4">🌤️ Evaluación Parcial N°3</h1>
+      <h2 class="mb-4">Despliegue de Modelo del Clima Australiano</h2>
+      <h3 class="mb-4"><strong>Docente:</strong> Christian Álvarez</h3>
+      <h3 class="mb-4"><strong>Alumno:</strong> Víctor Hernández</h3>
+      <h4 class="mb-4">
+        <strong>¿Qué zonas de Australia no son confortables para vivir?</strong>
+      </h4>
+      <form id="uploadForm" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label for="csvFile" class="form-label"
+            >Selecciona tu archivo CSV:</label
+          >
+          <input
+            class="form-control"
+            type="file"
+            id="csvFile"
+            name="file"
+            accept=".csv"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Cargar y Analizar</button>
+      </form>
+      <div class="loading" id="loading">
+        <div class="spinner-border text-primary" role="status"></div>
+        <div>Cargando y procesando datos...</div>
+      </div>
+      <div id="error" class="error"></div>
+      <div id="success" class="success"></div>
+      <div id="results" style="display: none">
+        <h2 class="section-title">Primeras Filas del Dataset Procesado</h2>
+        <div class="table-responsive">
+          <table class="table table-striped" id="dataHeadTable">
+            <thead>
+              <tr id="dataHeadColumns"></tr>
+            </thead>
+            <tbody id="dataHeadRows"></tbody>
+          </table>
+        </div>
+        <h2 class="section-title">Reporte de Clasificación</h2>
+        <div class="result-block">
+          <pre id="classificationReport"></pre>
+        </div>
+        <h2 class="section-title">Mejores Hiperparámetros y Score</h2>
+        <div class="result-block">
+          <div id="bestParams"></div>
+          <div id="bestScore"></div>
+        </div>
+        <h2 class="section-title">Árbol de Decisión</h2>
+        <div class="visual">
+          <img id="arbolImg" class="img-fluid" src="" alt="Árbol de Decisión" />
+          <div class="desc-graf">
+            Visualización del árbol de decisión entrenado. Cada nodo representa
+            una decisión basada en las variables climáticas, y los colores son
+            uniformes para todo el sistema.
+          </div>
+        </div>
+        <h2 class="section-title">Distribución de Confort Climático</h2>
+        <div class="visual">
+          <img
+            id="distribucionImg"
+            class="img-fluid"
+            src="/static/distribucion_confort.png"
+            alt="Distribución de Confort Climático"
+          />
+          <div class="desc-graf">
+            Gráfica de barras que muestra la cantidad de registros clasificados
+            como "Confort" y "No Confort" según las condiciones climáticas. Los
+            colores son consistentes con el resto de las visualizaciones.
+          </div>
+        </div>
+        <h2 class="section-title">
+          Nube de Palabras de Importancia de Variables
+        </h2>
+        <div class="visual">
+          <img
+            id="wordcloudImg"
+            class="img-fluid"
+            src=""
+            alt="Wordcloud Importancia"
+          />
+          <div class="desc-graf">
+            Nube de palabras que resalta las 15 variables más importantes para
+            el modelo de confort climático. El tamaño de cada palabra refleja su
+            importancia relativa.
+          </div>
+        </div>
+        <h2 class="section-title">Mapa de Zonas No Confortables</h2>
+        <div class="visual">
+          <a
+            id="mapaLink"
+            href="#"
+            target="_blank"
+            class="btn btn-outline-danger"
+            >Ver Mapa Interactivo</a
+          >
+          <span id="mapaCount" class="ms-3"></span>
+          <div class="desc-graf">
+            Mapa interactivo de Australia que muestra la ubicación de las zonas
+            predichas como no confortables, agrupadas para facilitar la
+            visualización.
+          </div>
+        </div>
+        <h2 class="section-title">Matriz de Correlación Interactiva</h2>
+        <form id="correlacionForm" class="mb-3">
+          <div id="correlacionCheckboxes" class="mb-2"></div>
+          <button type="submit" class="btn btn-secondary btn-sm">
+            Actualizar Matriz
+          </button>
+        </form>
+        <div class="visual">
+          <img
+            id="correlacionImg"
+            class="img-fluid"
+            src=""
+            alt="Matriz de Correlación"
+            style="display: none"
+          />
+          <div id="correlacionError" class="error"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const form = document.getElementById("uploadForm");
+      const loading = document.getElementById("loading");
+      const errorDiv = document.getElementById("error");
+      const successDiv = document.getElementById("success");
+      const resultsDiv = document.getElementById("results");
+
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        errorDiv.textContent = "";
+        successDiv.textContent = "";
+        resultsDiv.style.display = "none";
+        loading.style.display = "block";
+        const fileInput = document.getElementById("csvFile");
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+        try {
+          // Subir y procesar CSV
+          const response = await fetch("/upload", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await response.json();
+          if (!response.ok)
+            throw new Error(data.error || "Error al procesar el archivo");
+          // Mostrar primeras filas
+          renderTable(data.columnas_nombres, data.head);
+          // Mostrar reporte de clasificación
+          renderClassificationReport(data.classification_report);
+          // Mostrar mejores hiperparámetros y score
+          document.getElementById("bestParams").textContent =
+            "Mejores parámetros: " + JSON.stringify(data.best_params);
+          document.getElementById("bestScore").textContent =
+            "Mejor score (validación cruzada): " + data.best_score.toFixed(4);
+          // Mostrar árbol de decisión
+          document.getElementById("arbolImg").src = data.arbol_image;
+          // Mostrar wordcloud (se obtiene en /predict_random)
+          await fetchAndShowWordcloud();
+          // Mostrar mapa de zonas no confortables
+          await fetchAndShowMapa();
+          // Mostrar resultados
+          resultsDiv.style.display = "block";
+          successDiv.textContent =
+            "¡Archivo procesado y modelo entrenado exitosamente!";
+        } catch (err) {
+          errorDiv.textContent = err.message;
+        } finally {
+          loading.style.display = "none";
+        }
+      });
+
+      function renderTable(columns, rows) {
+        const headRow = document.getElementById("dataHeadColumns");
+        const bodyRows = document.getElementById("dataHeadRows");
+        headRow.innerHTML = "";
+        bodyRows.innerHTML = "";
+        columns.forEach((col) => {
+          const th = document.createElement("th");
+          th.textContent = col;
+          headRow.appendChild(th);
+        });
+        rows.forEach((row) => {
+          const tr = document.createElement("tr");
+          columns.forEach((col) => {
+            const td = document.createElement("td");
+            td.textContent = row[col];
+            tr.appendChild(td);
+          });
+          bodyRows.appendChild(tr);
+        });
+      }
+
+      function renderClassificationReport(report) {
+        let text = "";
+        for (const label in report) {
+          if (typeof report[label] === "object") {
+            text += `${label} → Precisión: ${
+              report[label].precision?.toFixed(3) ?? ""
+            }, Recall: ${report[label].recall?.toFixed(3) ?? ""}, F1: ${
+              report[label].f1?.toFixed(3) ?? ""
+            }, Support: ${report[label].support ?? ""}\n`;
+          }
+        }
+        document.getElementById("classificationReport").textContent = text;
+      }
+
+      async function fetchAndShowWordcloud() {
+        const resp = await fetch("/predict_random");
+        const data = await resp.json();
+        document.getElementById("wordcloudImg").src = data.wordcloud_url;
+      }
+
+      async function fetchAndShowMapa() {
+        const resp = await fetch("/mapa_no_confort");
+        const data = await resp.json();
+        document.getElementById("mapaLink").href = data.mapa_url;
+        document.getElementById(
+          "mapaCount"
+        ).textContent = `Total zonas no confortables: ${data.total_no_confort}`;
+      }
+
+      // Variables numéricas disponibles (puedes ajustar esta lista si cambian las columnas)
+      const numericVars = [
+        "MinTemp",
+        "MaxTemp",
+        "Humidity3pm",
+        "WindGustSpeed",
+        "Sunshine",
+        "Rainfall",
+        "Latitude",
+        "Longitude",
+        "MaxTemp",
+        "Evaporation",
+        "WindSpeed9am",
+        "WindSpeed3pm",
+        "Humidity9am",
+        "Pressure9am",
+        "Pressure3pm",
+        "Cloud9am",
+        "Cloud3pm",
+        "Temp9am",
+        "Temp3pm",
+        "RISK_MM",
+      ];
+
+      // Renderizar checkboxes
+      const correlacionCheckboxes = document.getElementById(
+        "correlacionCheckboxes"
+      );
+      numericVars.forEach((v) => {
+        const id = `corr_${v}`;
+        correlacionCheckboxes.innerHTML += `<label class='me-2'><input type='checkbox' id='${id}' value='${v}' checked> ${v}</label>`;
+      });
+
+      // Manejar envío del formulario de correlación
+      const correlacionForm = document.getElementById("correlacionForm");
+      const correlacionImg = document.getElementById("correlacionImg");
+      const correlacionError = document.getElementById("correlacionError");
+      correlacionForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        correlacionError.textContent = "";
+        correlacionImg.style.display = "none";
+        // Obtener variables seleccionadas
+        const selected = Array.from(
+          correlacionCheckboxes.querySelectorAll("input[type=checkbox]:checked")
+        ).map((cb) => cb.value);
+        if (selected.length < 2) {
+          correlacionError.textContent = "Selecciona al menos dos variables.";
+          return;
+        }
+        try {
+          const resp = await fetch("/correlacion", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ variables: selected }),
+          });
+          const data = await resp.json();
+          if (!resp.ok)
+            throw new Error(
+              data.error || "Error al generar la matriz de correlación"
+            );
+          correlacionImg.src = data.correlacion_url + "?t=" + Date.now(); // Forzar recarga
+          correlacionImg.style.display = "block";
+        } catch (err) {
+          correlacionError.textContent = err.message;
+        }
+      });
+    </script>
+  </body>
+</html>
