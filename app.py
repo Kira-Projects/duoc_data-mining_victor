@@ -219,7 +219,7 @@ def predict_random():
         plt.figure(figsize=(10, 5))
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
-        plt.title('Top 15 Características Importantes', color='#1a237e')
+        plt.title('Top 8 Características Importantes', color='#1a237e')
         plt.tight_layout()
         plt.savefig('static/wordcloud_importancia.png', dpi=150, bbox_inches='tight', facecolor='white')
         plt.close()
